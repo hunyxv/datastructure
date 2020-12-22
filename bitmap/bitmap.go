@@ -46,7 +46,7 @@ func (b *BitMap) Exists(key uint32) bool {
 	return b.array[index]>>position&1 == 1
 }
 
-// Size 返回 bitmap 大小
+// Size 返回 bitmap 已使用的大小
 func (b *BitMap) Size() int {
 	b.mux.RLock()
 	defer b.mux.RUnlock()
