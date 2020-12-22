@@ -10,7 +10,7 @@
 - 左子节点：![](http://latex.codecogs.com/svg.latex?i*2+1)
 - 右子节点：![](http://latex.codecogs.com/svg.latex?i*2+2)
 
-n 个结点的堆，深度 ![](https://latex.codecogs.com/svg.latex?h=\log\ n), 根为第0层，则第i层结点个数为 ![](https://latex.codecogs.com/svg.latex?2^i)，考虑一个元素在堆中向下移动的距离，这种算法时间代价为 Ο(n).
+n 个结点的堆，深度 ![](https://latex.codecogs.com/svg.latex?h=%5Clog\%20n), 根为第0层，则第i层结点个数为 ![](https://latex.codecogs.com/svg.latex?2^i)，考虑一个元素在堆中向下移动的距离，这种算法时间代价为 Ο(n).
 
 由于堆有 ![](https://latex.codecogs.com/svg.latex?\log%20n) 层深，插入结点、删除普通元素和删除最小元素的平均时间代价和时间复杂度都是 ![](https://latex.codecogs.com/svg.latex?O\log%20n).
 
