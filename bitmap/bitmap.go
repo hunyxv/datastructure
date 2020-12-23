@@ -46,6 +46,22 @@ func (b *BitMap) Exists(key uint32) bool {
 	return b.array[index]>>position&1 == 1
 }
 
+// Pop 从 bitmap 中删除某 key
+func (b *BitMap) Pop(key uint32) bool {
+	index := int(key / 8)
+	position := key % 8
+	b.mux.Lock()
+	defer b.mux.Unlock()
+
+	if b.array[index]>>position&1 != 1 {
+		return false
+	}
+
+	b.array[index] ^= (1 << position)
+	b.size--
+	return true
+}
+
 // Size 返回 bitmap 已使用的大小
 func (b *BitMap) Size() int {
 	b.mux.RLock()
