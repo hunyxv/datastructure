@@ -26,6 +26,9 @@ func (b *BitMap) Put(key uint32) bool {
 
 	if index >= len(b.array) {
 		b.grow(index)
+		b.array[index] |= 1 << position
+		b.size++
+		return true
 	}
 
 	if b.array[index]>>position&1 == 1 {
@@ -53,11 +56,11 @@ func (b *BitMap) Pop(key uint32) bool {
 	b.mux.Lock()
 	defer b.mux.Unlock()
 
-	if b.array[index]>>position&1 != 1 {
+	if index >= len(b.array) || b.array[index]>>position&1 != 1 {
 		return false
 	}
 
-	b.array[index] ^= (1 << position)
+	b.array[index] ^= 1 << position
 	b.size--
 	return true
 }
