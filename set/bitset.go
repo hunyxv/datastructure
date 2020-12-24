@@ -171,8 +171,8 @@ func (s *BitSet) SysmmetricDifference(other *BitSet) *BitSet {
 
 // IsSubSet report whether another set contains this set
 func (s *BitSet) IsSubSet(other *BitSet) bool {
-	s.mux.Lock()
-	defer s.mux.Unlock()
+	s.mux.RLock()
+	defer s.mux.RUnlock()
 	for _, el := range s.set {
 		if !other.Exists(el) {
 			return false
@@ -183,8 +183,8 @@ func (s *BitSet) IsSubSet(other *BitSet) bool {
 
 // IsSuperSet report whether this set contains another set.
 func (s *BitSet) IsSuperSet(other *BitSet) bool {
-	s.mux.Lock()
-	defer s.mux.Unlock()
+	s.mux.RLock()
+	defer s.mux.RUnlock()
 	for _, el := range other.Set() {
 		if !s.Exists(el) {
 			return false
