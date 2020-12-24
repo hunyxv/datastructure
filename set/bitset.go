@@ -20,12 +20,28 @@ type BitSet struct {
 	mux    *sync.RWMutex
 }
 
+// NewBitSet return new bitset
+func NewBitSet() *BitSet {
+	return &BitSet{
+		set:    make([]Interface, 0),
+		bitmap: bitmap.NewBitMap(),
+		mux:    new(sync.RWMutex),
+	}
+}
+
 // Add Add an element to a set.
 func (s *BitSet) Add(el Interface) {
 	if s.bitmap.Put(el.Hash()) {
 		s.mux.Lock()
 		s.set = append(s.set, el)
 		s.mux.Unlock()
+	}
+}
+
+// AddFromList .
+func (s *BitSet) AddFromList(els []Interface) {
+	for _, el := range els {
+		s.Add(el)
 	}
 }
 
@@ -45,7 +61,9 @@ func (s *BitSet) Update(other *BitSet) {
 func (s *BitSet) Set() []Interface {
 	s.mux.RLock()
 	defer s.mux.RUnlock()
-	return s.set
+	set := make([]Interface, len(s.set))
+	copy(set, s.set)
+	return set
 }
 
 // Remove remove an element from a set; it must be a member.
@@ -93,32 +111,85 @@ func (s *BitSet) Size() int {
 	return len(s.set)
 }
 
-// Difference return the difference of two or more sets as a new set.
+// Difference return the difference of two sets as a new set.
 func (s *BitSet) Difference(other *BitSet) *BitSet {
-	return nil
+	set := NewBitSet()
+
+	s.mux.RLock()
+	defer s.mux.RUnlock()
+	for _, el := range s.set {
+		if !other.Exists(el) {
+			set.Add(el)
+		}
+	}
+	return set
 }
 
 // Intersection return the intersection of two sets as a new set.
 func (s *BitSet) Intersection(other *BitSet) *BitSet {
-	return nil
+	set := NewBitSet()
+
+	s.mux.RLock()
+	defer s.mux.RUnlock()
+	for _, el := range s.set {
+		if other.Exists(el) {
+			set.Add(el)
+		}
+	}
+
+	return set
 }
 
 // Union return the union of sets as a new set.
 func (s *BitSet) Union(other *BitSet) *BitSet {
-	return nil
+	set := NewBitSet()
+	set.AddFromList(other.Set())
+	s.mux.RLock()
+	defer s.mux.RUnlock()
+	for _, el := range s.set {
+		set.Add(el)
+	}
+	return set
 }
 
 // SysmmetricDifference return the symmetric difference of two sets as a new set.
 func (s *BitSet) SysmmetricDifference(other *BitSet) *BitSet {
-	return nil
+	set := NewBitSet()
+	set.AddFromList(other.Set())
+
+	s.mux.RLock()
+	defer s.mux.RUnlock()
+	for _, el := range s.set {
+		if !other.Exists(el) {
+			set.Add(el)
+		} else {
+			set.Remove(el)
+		}
+	}
+	return set
 }
 
 // IsSubSet report whether another set contains this set
 func (s *BitSet) IsSubSet(other *BitSet) bool {
-	return false
+	s.mux.Lock()
+	defer s.mux.Unlock()
+	for _, el := range s.set {
+		if !other.Exists(el) {
+			return false
+		}
+	}
+	return true
 }
 
 // IsSuperSet report whether this set contains another set.
 func (s *BitSet) IsSuperSet(other *BitSet) bool {
-	return false
+	s.mux.Lock()
+	defer s.mux.Unlock()
+	for _, el := range other.Set() {
+		if !s.Exists(el) {
+			return false
+		}
+	}
+
+	return true
 }
