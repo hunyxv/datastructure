@@ -46,6 +46,9 @@ func (b *BitMap) Exists(key uint32) bool {
 	position := key % 8
 	b.mux.RLock()
 	defer b.mux.RUnlock()
+	if index >= len(b.array) {
+		return false
+	}
 	return b.array[index]>>position&1 == 1
 }
 
