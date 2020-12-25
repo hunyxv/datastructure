@@ -1,6 +1,10 @@
 package set
 
-import "testing"
+import (
+	"math/rand"
+	"testing"
+	"time"
+)
 
 type Value uint32
 
@@ -134,4 +138,16 @@ func TestBitmapIsSuperSet(t *testing.T) {
 	if !set.IsSuperSet(set2) {
 		t.FailNow()
 	}
+}
+
+func BenchmarkBitSetAdd(b *testing.B) {
+	set := NewBitSet()
+	b.RunParallel(func(pb *testing.PB) {
+		source := rand.NewSource(time.Now().UnixNano())
+		r := rand.New(source)
+		for pb.Next() {
+			n := r.Uint32()
+			set.Add(Value(n))
+		}
+	})
 }

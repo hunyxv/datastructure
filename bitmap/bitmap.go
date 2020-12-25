@@ -80,9 +80,11 @@ func (b *BitMap) grow(index int) {
 		b.array = append(b.array, make([]byte, 2*index-len(b.array)+1)...)
 		return
 	}
-	newcap := uint(float32(index) * 1.25)
+	newcap := uint(float32(index)*1.25) + 1
 	if newcap > math.MaxUint32/8 {
 		newcap = math.MaxUint32 / 8
 	}
-	b.array = append(b.array, make([]byte, int(newcap)-len(b.array)+1)...)
+	array := make([]byte, newcap)
+	copy(array, b.array)
+	b.array = array
 }

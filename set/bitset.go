@@ -107,7 +107,7 @@ func (s *BitSet) Pop() (Interface, error) {
 // Size returns the number of elements in the set.
 func (s *BitSet) Size() int {
 	s.mux.RLock()
-	defer s.mux.Unlock()
+	defer s.mux.RUnlock()
 	return len(s.set)
 }
 
