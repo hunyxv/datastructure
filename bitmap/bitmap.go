@@ -9,12 +9,12 @@ import (
 type BitMap struct {
 	mux   *sync.RWMutex
 	size  int
-	array []byte
+	array [math.MaxUint32 / 8]byte
 }
 
 // NewBitMap .
 func NewBitMap() *BitMap {
-	return &BitMap{mux: new(sync.RWMutex), array: make([]byte, 0)}
+	return &BitMap{mux: new(sync.RWMutex)}
 }
 
 // Put 将key记录在 bitmap 中
@@ -23,13 +23,6 @@ func (b *BitMap) Put(key uint32) bool {
 	position := key % 8
 	b.mux.Lock()
 	defer b.mux.Unlock()
-
-	if index >= len(b.array) {
-		b.grow(index)
-		b.array[index] |= 1 << position
-		b.size++
-		return true
-	}
 
 	if b.array[index]>>position&1 == 1 {
 		return false
@@ -46,9 +39,6 @@ func (b *BitMap) Exists(key uint32) bool {
 	position := key % 8
 	b.mux.RLock()
 	defer b.mux.RUnlock()
-	if index >= len(b.array) {
-		return false
-	}
 	return b.array[index]>>position&1 == 1
 }
 
@@ -59,7 +49,7 @@ func (b *BitMap) Pop(key uint32) bool {
 	b.mux.Lock()
 	defer b.mux.Unlock()
 
-	if index >= len(b.array) || b.array[index]>>position&1 != 1 {
+	if b.array[index]>>position&1 != 1 {
 		return false
 	}
 
@@ -73,18 +63,4 @@ func (b *BitMap) Size() int {
 	b.mux.RLock()
 	defer b.mux.RUnlock()
 	return b.size
-}
-
-func (b *BitMap) grow(index int) {
-	if index < 1024 {
-		b.array = append(b.array, make([]byte, 2*index-len(b.array)+1)...)
-		return
-	}
-	newcap := uint(float32(index)*1.25) + 1
-	if newcap > math.MaxUint32/8 {
-		newcap = math.MaxUint32 / 8
-	}
-	array := make([]byte, newcap)
-	copy(array, b.array)
-	b.array = array
 }

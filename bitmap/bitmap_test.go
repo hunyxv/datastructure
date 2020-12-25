@@ -10,7 +10,7 @@ func TestBitMap(t *testing.T) {
 		bitmap.Put(uint32(v))
 	}
 
-	if bitmap.Size() != 8 || len(bitmap.array) != 5 {
+	if bitmap.Size() != 8 {
 		t.FailNow()
 	}
 }
