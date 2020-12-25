@@ -12,9 +12,7 @@ type MapSet struct {
 
 // NewMapSet return new bitset
 func NewMapSet() *MapSet {
-	return &MapSet{
-		//m: new(sync.Map),
-	}
+	return &MapSet{}
 }
 
 // Add Add an element to a set.
