@@ -137,7 +137,7 @@ func (s *MapSet) SysmmetricDifference(other *MapSet) *MapSet {
 
 // IsSubSet report whether another set contains this set
 func (s *MapSet) IsSubSet(other *MapSet) bool {
-	var b bool
+	var b bool = true
 	s.Range(func(el, _ interface{}) bool {
 		if !other.Exists(el) {
 			b = false
@@ -151,7 +151,7 @@ func (s *MapSet) IsSubSet(other *MapSet) bool {
 
 // IsSuperSet report whether this set contains another set.
 func (s *MapSet) IsSuperSet(other *MapSet) bool {
-	var b bool
+	var b bool = true
 	other.Range(func(el, _ interface{}) bool {
 		if !s.Exists(el) {
 			b = false
