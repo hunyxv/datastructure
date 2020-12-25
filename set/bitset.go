@@ -50,13 +50,6 @@ func (s *BitSet) Exists(el Interface) bool {
 	return s.bitmap.Exists(el.Hash())
 }
 
-// Update Update a set with the union of itself and others
-func (s *BitSet) Update(other *BitSet) {
-	for _, el := range other.Set() {
-		s.Add(el)
-	}
-}
-
 // Set returns all elements in set
 func (s *BitSet) Set() []Interface {
 	s.mux.RLock()

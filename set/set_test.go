@@ -151,3 +151,16 @@ func BenchmarkBitSetAdd(b *testing.B) {
 		}
 	})
 }
+
+
+func BenchmarkMapSetAdd(b *testing.B) {
+	set := NewMapSet()
+	b.RunParallel(func(pb *testing.PB) {
+		source := rand.NewSource(time.Now().UnixNano())
+		r := rand.New(source)
+		for pb.Next() {
+			n := r.Uint32()
+			set.Add(n)
+		}
+	})
+}
