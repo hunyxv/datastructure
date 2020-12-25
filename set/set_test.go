@@ -23,7 +23,7 @@ func TestBitSet(t *testing.T) {
 
 	t.Logf("%+v", set.Set())
 	set.Remove(Value(54))
-	t.Logf("remove 7 --> %+v", set.Set())
+	t.Logf("remove 54 --> %+v", set.Set())
 }
 
 func TestBitSetRemove(t *testing.T) {
@@ -150,8 +150,8 @@ func TestMapSet(t *testing.T) {
     }
 
     t.Logf("%+v", set.Set())
-    set.Remove(Value(54))
-    t.Logf("remove 7 --> %+v", set.Set())
+    set.Remove(54)
+    t.Logf("remove 54 --> %+v", set.Set())
 }
 
 func TestMapSetRemove(t *testing.T) {
