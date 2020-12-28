@@ -141,131 +141,130 @@ func TestBitSetIsSuperSet(t *testing.T) {
 }
 
 func TestMapSet(t *testing.T) {
-    set := NewMapSet()
+	set := NewMapSet()
 
-    list := []int{1, 2, 3, 4, 5, 5, 6, 8, 98, 4, 3, 54, 5, 2, 2, 4, 56, 2, 2, 5, 65, 6, 7}
+	list := []int{1, 2, 3, 4, 5, 5, 6, 8, 98, 4, 3, 54, 5, 2, 2, 4, 56, 2, 2, 5, 65, 6, 7}
 
-    for _, v := range list {
-        set.Add(v)
-    }
+	for _, v := range list {
+		set.Add(v)
+	}
 
-    t.Logf("%+v", set.Set())
-    set.Remove(54)
-    t.Logf("remove 54 --> %+v", set.Set())
+	t.Logf("%+v", set.Set())
+	set.Remove(54)
+	t.Logf("remove 54 --> %+v", set.Set())
 }
 
 func TestMapSetRemove(t *testing.T) {
-    set := NewMapSet()
+	set := NewMapSet()
 
-    set.Remove(1)
+	set.Remove(1)
 }
 
 func TestMapSetPop(t *testing.T) {
-    set := NewMapSet()
+	set := NewMapSet()
 
-    if _, err := set.Pop(); err == nil {
-        t.Fatal("set is empty")
-    }
+	if _, err := set.Pop(); err == nil {
+		t.Fatal("set is empty")
+	}
 
-    list := []int{1, 2, 3, 4, 5, 5, 6, 8, 98, 4, 3, 54, 5, 2, 2, 4, 56, 2, 2, 5, 65, 6, 7}
-    for _, v := range list {
-        set.Add(v)
-    }
+	list := []int{1, 2, 3, 4, 5, 5, 6, 8, 98, 4, 3, 54, 5, 2, 2, 4, 56, 2, 2, 5, 65, 6, 7}
+	for _, v := range list {
+		set.Add(v)
+	}
 
-    v, err := set.Pop()
-    if err != nil {
-        t.Fatal("set is not empty")
-    }
-    t.Logf("pop --> %+v", v.(int))
+	v, err := set.Pop()
+	if err != nil {
+		t.Fatal("set is not empty")
+	}
+	t.Logf("pop --> %+v", v.(int))
 }
 
 func TestMapSetDifference(t *testing.T) {
-    set := NewMapSet()
-    list := []int{1, 2, 3, 4, 5, 8, 0}
-    for _, v := range list {
-        set.Add(v)
-    }
+	set := NewMapSet()
+	list := []int{1, 2, 3, 4, 5, 8, 0}
+	for _, v := range list {
+		set.Add(v)
+	}
 
-    set2 := NewMapSet()
-    list2 := []int{8, 0, 7, 6, 9}
-    for _, v := range list2 {
-        set2.Add(v)
-    }
+	set2 := NewMapSet()
+	list2 := []int{8, 0, 7, 6, 9}
+	for _, v := range list2 {
+		set2.Add(v)
+	}
 
-    diff := set.Difference(set2)
-    t.Logf("%+v", diff.Set())
+	diff := set.Difference(set2)
+	t.Logf("%+v", diff.Set())
 }
 
 func TestMapSetIntersection(t *testing.T) {
-    set := NewMapSet()
-    list := []int{1, 2, 3, 5, 8, 0}
-    for _, v := range list {
-        set.Add(v)
-    }
+	set := NewMapSet()
+	list := []int{1, 2, 3, 5, 8, 0}
+	for _, v := range list {
+		set.Add(v)
+	}
 
-    set2 := NewMapSet()
-    list2 := []int{8, 0, 7, 6, 9}
-    for _, v := range list2 {
-        set2.Add(v)
-    }
+	set2 := NewMapSet()
+	list2 := []int{8, 0, 7, 6, 9}
+	for _, v := range list2 {
+		set2.Add(v)
+	}
 
-    intersection := set.Intersection(set2)
-    t.Logf("%+v", intersection.Set())
+	intersection := set.Intersection(set2)
+	t.Logf("%+v", intersection.Set())
 }
 
 func TestMapSetUnion(t *testing.T) {
-    set := NewMapSet()
-    list := []int{1, 2, 3, 5, 8, 0}
-    for _, v := range list {
-        set.Add(v)
-    }
+	set := NewMapSet()
+	list := []int{1, 2, 3, 5, 8, 0}
+	for _, v := range list {
+		set.Add(v)
+	}
 
-    set2 := NewMapSet()
-    list2 := []int{8, 0, 7, 6, 9}
-    for _, v := range list2 {
-        set2.Add(v)
-    }
+	set2 := NewMapSet()
+	list2 := []int{8, 0, 7, 6, 9}
+	for _, v := range list2 {
+		set2.Add(v)
+	}
 
-    intersection := set.Union(set2)
-    t.Logf("%+v", intersection.Set())
+	intersection := set.Union(set2)
+	t.Logf("%+v", intersection.Set())
 }
 
 func TestMapSetIsSubSet(t *testing.T) {
-    set := NewMapSet()
-    list := []int{1, 2, 3, 5, 8, 0}
-    for _, v := range list {
-        set.Add(v)
-    }
+	set := NewMapSet()
+	list := []int{1, 2, 3, 5, 8, 0}
+	for _, v := range list {
+		set.Add(v)
+	}
 
-    set2 := NewMapSet()
-    list2 := []int{1, 2, 3, 5, 8, 0}
-    for _, v := range list2 {
-        set2.Add(v)
-    }
+	set2 := NewMapSet()
+	list2 := []int{1, 2, 3, 5, 8, 0}
+	for _, v := range list2 {
+		set2.Add(v)
+	}
 
-    if !set.IsSubSet(set2) {
-        t.FailNow()
-    }
+	if !set.IsSubSet(set2) {
+		t.FailNow()
+	}
 }
 
 func TestMapSetIsSuperSet(t *testing.T) {
-    set := NewMapSet()
-    list := []int{1, 2, 3, 5, 6}
-    for _, v := range list {
-        set.Add(v)
-    }
+	set := NewMapSet()
+	list := []int{1, 2, 3, 5, 6}
+	for _, v := range list {
+		set.Add(v)
+	}
 
-    set2 := NewMapSet()
-    list2 := []int{1, 2, 3}
-    for _, v := range list2 {
-        set2.Add(v)
-    }
+	set2 := NewMapSet()
+	list2 := []int{1, 2, 3}
+	for _, v := range list2 {
+		set2.Add(v)
+	}
 
-    if !set.IsSuperSet(set2) {
-        t.FailNow()
-    }
+	if !set.IsSuperSet(set2) {
+		t.FailNow()
+	}
 }
-
 
 func BenchmarkBitSetAdd(b *testing.B) {
 	set := NewBitSet()
@@ -278,7 +277,6 @@ func BenchmarkBitSetAdd(b *testing.B) {
 		}
 	})
 }
-
 
 func BenchmarkMapSetAdd(b *testing.B) {
 	set := NewMapSet()
