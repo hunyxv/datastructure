@@ -39,6 +39,7 @@ func TestStackTraverse(t *testing.T) {
 	})
 }
 
+// 使用 stack 来迷宫求解
 // 迷宫范围 1,1 --> 8,8
 var maze = [10][10]int{
 	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -91,20 +92,13 @@ func TestMaze(t *testing.T) {
 			maze[p.x][p.y] = 2
 		}
 		if p.x == 8 && p.y == 8 {
-			t.Log("---------------------")
-			for _, l := range maze {
-				t.Log(l)
-			}
-			t.Log("---------------------")
-
-			count++ 
-			if top , err := stack.Pop(); err != nil {
+			count++
+			if top, err := stack.Pop(); err != nil {
 				break
 			} else {
 				t := top.(*point)
 				maze[t.x][t.y] = 0
 			}
-			
 			if top, err := stack.GetTop(); err == nil {
 				p = top.(*point)
 			}
