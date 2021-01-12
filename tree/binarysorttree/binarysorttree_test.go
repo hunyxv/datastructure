@@ -65,3 +65,13 @@ func TestDeleteNode(t *testing.T) {
 	t.Logf("Delete: %t", binaryTree.Delete(data(20)))
 	printTree(binaryTree)
 }
+
+func TestTraversal(t *testing.T) {
+	binaryTree.Traversal(func(i Interface) bool {
+		t.Log(i.Value())
+		if i.Value() == 15 {
+			return false
+		}
+		return true
+	})
+}

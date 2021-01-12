@@ -1,5 +1,9 @@
 package binarysorttree
 
+import (
+	"github.com/hunyxv/datastructure/stack"
+)
+
 // Interface .
 type Interface interface {
 	Value() int
@@ -91,7 +95,12 @@ func (t *BSTNode) Delete(d Interface) bool {
 		} else {
 			if current.rsubtree != nil && current.lsubtree != nil {
 				maxParent, max := current.lsubtree.getLeftSubTreeMax(current)
-				maxParent.lsubtree = nil
+				if maxParent != current {
+					maxParent.rsubtree = max.lsubtree
+				} else {
+					maxParent.lsubtree = nil
+				}
+				
 				current.data = max.data
 			} else if current.lsubtree != nil {
 				tmp := current.lsubtree
@@ -124,21 +133,47 @@ func (t *BSTNode) Delete(d Interface) bool {
 
 // Depth 树的深度
 func (t *BSTNode) Depth() uint {
-	var max, left, right uint = 1, 1, 1
+	var  left, right uint =  1, 1
 	if t.lsubtree != nil {
-		left = max + t.lsubtree.Depth()
+		left = 1 + t.lsubtree.Depth()
 	}
 	if t.rsubtree != nil {
-		right = max + t.rsubtree.Depth()
+		right = 1 + t.rsubtree.Depth()
 	}
 
-	if left > right {
-		return left
+	if t.isRoot {
+		return max(left, right) -1
 	}
-	return right
+	return max(left, right)
 }
 
 // Data 当前节点的保存的数据
 func (t *BSTNode) Data() Interface {
 	return t.data
+}
+
+// Traversal 遍历各个值（深度优先--中序遍历 (从小到大)）
+func (t *BSTNode) Traversal(f func(Interface) bool) {
+	current := t
+	sk := stack.NewStack(int(t.Depth()))
+	for current != nil || !sk.IsEmpty() {
+		if current != nil {
+			sk.Push(current)
+			current = current.lsubtree
+			continue
+		}
+		el, _ := sk.Pop()
+		node := el.(*BSTNode)
+		if !f(node.data) {
+			return
+		}
+		current = node.rsubtree
+	}
+}
+
+func max(a, b uint) uint {
+	if a > b {
+		return a
+	}
+	return b
 }
