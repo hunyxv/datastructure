@@ -213,7 +213,6 @@ func (t *AVLTree) Traversal(f func(Interface) bool) {
 }
 
 // singRotateLeft 向左旋转(左左)
-//
 func (t *AVLTree) singRotateLeft() {
 	tmp := t.lsubtree
 	t.data, tmp.data = tmp.data, t.data
