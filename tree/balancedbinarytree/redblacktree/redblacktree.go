@@ -34,27 +34,6 @@ func newNode(parent *RedBlackNode, d Interface) *RedBlackNode {
 	}
 }
 
-// Insert 插入数据
-func (t *RedBlackNode) Insert(d Interface) {
-	if t.data.Value() > d.Value() {
-		if t.lsubtree != nil {
-			t.lsubtree.Insert(d)
-		} else {
-			t.lsubtree = newNode(t, d)
-			t.lsubtree.insertRestructuring()
-		}
-	} else if t.data.Value() < d.Value() {
-		if t.rsubtree != nil {
-			t.rsubtree.Insert(d)
-		} else {
-			t.rsubtree = newNode(t, d)
-			t.rsubtree.insertRestructuring()
-		}
-	} else {
-		t.freq++
-	}
-}
-
 func (t *RedBlackNode) grandparent() *RedBlackNode {
 	if t.parent == nil {
 		return nil
@@ -70,6 +49,16 @@ func (t *RedBlackNode) uncle() *RedBlackNode {
 		return t.grandparent().rsubtree
 	}
 	return t.grandparent().lsubtree
+}
+
+func (t *RedBlackNode) brother() *RedBlackNode {
+	if t.parent == nil {
+		return nil
+	}
+	if t == t.parent.lsubtree {
+		return t.parent.rsubtree
+	}
+	return t.parent.lsubtree
 }
 
 // 左旋转
@@ -137,6 +126,27 @@ func (t *RedBlackNode) singRotateRight() {
 	}
 }
 
+// Insert 插入数据
+func (t *RedBlackNode) Insert(d Interface) {
+	if t.data.Value() > d.Value() {
+		if t.lsubtree != nil {
+			t.lsubtree.Insert(d)
+		} else {
+			t.lsubtree = newNode(t, d)
+			t.lsubtree.insertRestructuring()
+		}
+	} else if t.data.Value() < d.Value() {
+		if t.rsubtree != nil {
+			t.rsubtree.Insert(d)
+		} else {
+			t.rsubtree = newNode(t, d)
+			t.rsubtree.insertRestructuring()
+		}
+	} else {
+		t.freq++
+	}
+}
+
 // insertRestructuring 插入新节点后调整至平衡
 func (t *RedBlackNode) insertRestructuring() {
 	if t.isRoot {
@@ -182,6 +192,138 @@ func (t *RedBlackNode) insertRestructuring() {
 					grandparent.singRotateLeft()
 				}
 				return
+			}
+		}
+	}
+}
+
+// Delete 删除节点
+func (t *RedBlackNode) Delete(d Interface) {
+	if t.data.Value() < d.Value() {
+		t.rsubtree.Delete(d)
+	} else if t.data.Value() > d.Value() {
+		t.lsubtree.Delete(d)
+	} else {
+		if t.lsubtree != nil && t.rsubtree != nil {
+			rightMin := t.rsubtree.getRightSubTreeMin()
+			t.data = rightMin.data
+			t.freq = rightMin.freq
+			rightMin.deleteRestructuring()
+			rightMin.deleteNode()
+		} else if t.lsubtree != nil {
+			t.data = t.lsubtree.data
+			t.freq = t.lsubtree.freq
+			t.lsubtree.Delete(t.data)
+		} else if t.rsubtree != nil {
+			t.data = t.rsubtree.data
+			t.freq = t.rsubtree.freq
+			t.rsubtree.Delete(t.data)
+		} else {
+			t.deleteRestructuring()
+			t.deleteNode()
+		}
+	}
+}
+
+func (t *RedBlackNode) getLeftSubTreeMax() *RedBlackNode {
+	node := t.rsubtree
+	if node == nil {
+		return t
+	}
+
+	return node.getLeftSubTreeMax()
+}
+
+func (t *RedBlackNode) getRightSubTreeMin() *RedBlackNode {
+	node := t.lsubtree
+	if node == nil {
+		return t
+	}
+
+	return node.getRightSubTreeMin()
+}
+
+func (t *RedBlackNode) deleteNode() {
+	if t.isRoot {
+		t.data = nil
+		return
+	}
+
+	if t.parent == nil {
+		return
+	}
+	if t == t.parent.lsubtree {
+		t.parent.lsubtree = nil
+	} else {
+		t.parent.rsubtree = nil
+	}
+	t.parent = nil
+	return
+}
+
+// deleteRestructuring 删除节点后调整至平衡
+func (t *RedBlackNode) deleteRestructuring() {
+	if t.isRed {
+		t.deleteNode()
+		return
+	}
+
+	if t == t.parent.lsubtree { // 替换节点是其父节点的左子节点
+		brother := t.parent.rsubtree
+		if brother != nil {
+			if brother.isRed {
+				brother.isRed = false
+				t.parent.isRed = true
+				t.parent.singRotateLeft()
+				t.deleteRestructuring()
+			} else if brother.rsubtree != nil {
+				if brother.rsubtree.isRed {
+					brother.isRed = t.parent.isRed
+					t.parent.isRed = false
+					brother.rsubtree.isRed = false
+					t.parent.singRotateLeft()
+				} else if brother.lsubtree != nil {
+					if brother.lsubtree.isRed {
+						brother.lsubtree.isRed = false
+						brother.isRed = true
+						brother.singRotateRight()
+						t.deleteRestructuring()
+					} else {
+						brother.isRed = true
+						t.parent.deleteRestructuring()
+					}
+				}
+			}
+		}
+	} else { // 替换节点是其父节点的右子节点
+		brother := t.parent.lsubtree
+		if brother != nil {
+			if brother.isRed { // 替换节点的兄弟节点是红色
+				brother.isRed = false
+				t.parent.isRed = true
+				t.parent.singRotateRight()
+				t.deleteRestructuring()
+			} else {
+				if brother.lsubtree != nil {
+					if brother.lsubtree.isRed {
+						brother.isRed = t.parent.isRed
+						t.parent.isRed = false
+						brother.lsubtree.isRed = false
+						t.parent.singRotateRight()
+					} else {
+						if brother.rsubtree != nil {
+							if brother.rsubtree.isRed {
+								brother.isRed = true
+								brother.rsubtree.isRed = false
+								brother.singRotateLeft()
+								t.deleteRestructuring()
+							} else {
+								brother.isRed = false
+								t.parent.deleteRestructuring()
+							}
+						}
+					}
+				}
 			}
 		}
 	}

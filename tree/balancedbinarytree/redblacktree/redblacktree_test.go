@@ -67,9 +67,20 @@ func TestInsert(t *testing.T) {
 	tree := NewReadBlackTree(data[0])
 	for i:=1;i<len(data); i++ {
 		tree.Insert(data[i])
-		printTree(tree)
-		fmt.Println()
 	}
 
+	printTree(tree)
+}
+
+func TestDelete(t *testing.T) {
+	ds := []data{42, 37, 18, 12, 11, 6, 5, 1}
+	tree := NewReadBlackTree(ds[0])
+	for i:=1;i<len(ds); i++ {
+		tree.Insert(ds[i])
+	}
+
+	printTree(tree)
+	fmt.Println()
+	tree.Delete(data(37))
 	printTree(tree)
 }
