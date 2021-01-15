@@ -82,9 +82,6 @@ func (t *RedBlackNode) singRotateLeft() {
 		t.rsubtree = tmp.rsubtree
 		t.rsubtree.parent = t
 		tmp.rsubtree = tmp.lsubtree
-		if tmp.rsubtree != nil {
-			tmp.rsubtree.parent = tmp
-		}
 		tmp.lsubtree = t.lsubtree
 		if tmp.lsubtree != nil {
 			tmp.lsubtree.parent = tmp
@@ -114,10 +111,6 @@ func (t *RedBlackNode) singRotateRight() {
 		t.lsubtree = tmp.lsubtree
 		t.lsubtree.parent = t
 		tmp.lsubtree = tmp.rsubtree
-		if tmp.lsubtree != nil {
-			tmp.lsubtree.parent = tmp
-		}
-
 		tmp.rsubtree = t.rsubtree
 		if tmp.rsubtree != nil {
 			tmp.rsubtree.parent = tmp
@@ -158,6 +151,7 @@ func (t *RedBlackNode) insertRestructuring() {
 	if t.parent.isRed {
 		uncle := t.uncle()
 		grandparent := t.grandparent()
+		parent := t.parent
 		// 叔叔节点不为空并且是红色
 		if uncle != nil && uncle.isRed {
 			t.parent.isRed = false
@@ -170,24 +164,26 @@ func (t *RedBlackNode) insertRestructuring() {
 		// 叔叔节点不存在或是黑色节点
 		if uncle == nil || !uncle.isRed {
 			// 插入节点的父节点是其祖父节点的左子节点
-			if t.parent == grandparent.lsubtree {
-				if t == t.parent.lsubtree { // 插入节点是其父节点的左子节点
-					t.parent.isRed = false
+			if parent == grandparent.lsubtree {
+				if t == t.parent.lsubtree { // 插入节点是其父节点的左子节点，左左
+					parent.isRed = false
 					grandparent.isRed = true
 					grandparent.singRotateRight()
-				} else { // 插入节点是其父节点的右子节点
-					t.parent.singRotateLeft()
-					t.parent.insertRestructuring()
+				} else { // 插入节点是其父节点的右子节点，左右
+					parent := t.parent
+					parent.singRotateLeft()
+					parent.insertRestructuring()
 				}
 				return
 			}
 			// 插入节点的父节点是其祖父节点的右子节点
-			if t.parent == grandparent.rsubtree {
-				if t == t.parent.lsubtree { // 插入节点是其父节点的左子节点
-					t.parent.singRotateRight()
-					t.parent.insertRestructuring()
+			if parent == grandparent.rsubtree {
+				if t == parent.lsubtree { // 插入节点是其父节点的左子节点
+					parent := parent
+					parent.singRotateRight()
+					parent.insertRestructuring()
 				} else { // 插入节点是其父节点的右子节点
-					t.parent.isRed = false
+					parent.isRed = false
 					grandparent.isRed = true
 					grandparent.singRotateLeft()
 				}
@@ -271,31 +267,31 @@ func (t *RedBlackNode) deleteRestructuring() {
 	if t == t.parent.lsubtree { // 替换节点是其父节点的左子节点
 		brother := t.parent.rsubtree
 		if brother != nil {
-			if brother.isRed {
+			if brother.isRed { // 兄弟节点是红色
 				brother.isRed = false
 				t.parent.isRed = true
 				t.parent.singRotateLeft()
 				t.deleteRestructuring()
 			} else if brother.rsubtree != nil {
-				if brother.rsubtree.isRed {
+				if brother.rsubtree.isRed { // 兄弟节点为黑色，其右子节点为红色（左子节点为任意色）
 					brother.isRed = t.parent.isRed
 					t.parent.isRed = false
 					brother.rsubtree.isRed = false
 					t.parent.singRotateLeft()
 				} else if brother.lsubtree != nil {
-					if brother.lsubtree.isRed {
+					if brother.lsubtree.isRed { // 兄弟节点为黑色，其左子节点为红色（右子节点为任意色）
 						brother.lsubtree.isRed = false
 						brother.isRed = true
 						brother.singRotateRight()
 						t.deleteRestructuring()
-					} else {
+					} else { // 兄弟节点为黑色，其左右子节点都为黑色
 						brother.isRed = true
 						t.parent.deleteRestructuring()
 					}
 				}
 			}
 		}
-	} else { // 替换节点是其父节点的右子节点
+	} else { // 替换节点是其父节点的右子节点（和上面类似）
 		brother := t.parent.lsubtree
 		if brother != nil {
 			if brother.isRed { // 替换节点的兄弟节点是红色
@@ -305,19 +301,19 @@ func (t *RedBlackNode) deleteRestructuring() {
 				t.deleteRestructuring()
 			} else {
 				if brother.lsubtree != nil {
-					if brother.lsubtree.isRed {
+					if brother.lsubtree.isRed { // 兄弟节点为黑色，其左子节点是红色（右子节点为任意色）
 						brother.isRed = t.parent.isRed
 						t.parent.isRed = false
 						brother.lsubtree.isRed = false
 						t.parent.singRotateRight()
 					} else {
 						if brother.rsubtree != nil {
-							if brother.rsubtree.isRed {
+							if brother.rsubtree.isRed { // 兄弟节点为黑色，其右子节点是红色（左子节点为任意色）
 								brother.isRed = true
 								brother.rsubtree.isRed = false
 								brother.singRotateLeft()
 								t.deleteRestructuring()
-							} else {
+							} else { // 兄弟节点为黑色，其左右子节点都为黑色
 								brother.isRed = false
 								t.parent.deleteRestructuring()
 							}

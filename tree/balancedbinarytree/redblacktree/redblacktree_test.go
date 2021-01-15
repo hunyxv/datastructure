@@ -22,7 +22,7 @@ func printTree(tree *RedBlackNode) {
 	}
 }
 
-func TestSingRotateLeft(t *testing.T){
+func TestSingRotateLeft(t *testing.T) {
 	tree := NewReadBlackTree(data(5))
 	prt := tree
 	prt.rsubtree = newNode(prt, data(7))
@@ -34,7 +34,7 @@ func TestSingRotateLeft(t *testing.T){
 	printTree(tree)
 }
 
-func TestSingRotateLeft2(t *testing.T){
+func TestSingRotateLeft2(t *testing.T) {
 	tree := NewReadBlackTree(data(7))
 	prt := tree
 	prt.lsubtree = newNode(prt, data(5))
@@ -46,12 +46,12 @@ func TestSingRotateLeft2(t *testing.T){
 	printTree(tree)
 }
 
-func TestSingRotateRight(t *testing.T){
+func TestSingRotateRight(t *testing.T) {
 	tree := NewReadBlackTree(data(7))
 	prt := tree
 	prt.lsubtree = newNode(prt, data(6))
-	
-	x:=prt.lsubtree
+
+	x := prt.lsubtree
 	prt = prt.lsubtree
 	prt.lsubtree = newNode(prt, data(3))
 
@@ -65,7 +65,7 @@ func TestSingRotateRight(t *testing.T){
 func TestInsert(t *testing.T) {
 	data := []data{42, 37, 18, 12, 11, 6, 5, 1}
 	tree := NewReadBlackTree(data[0])
-	for i:=1;i<len(data); i++ {
+	for i := 1; i < len(data); i++ {
 		tree.Insert(data[i])
 	}
 
@@ -73,9 +73,9 @@ func TestInsert(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-	ds := []data{42, 37, 18, 12, 11, 6, 5, 1}
+	ds := []data{17, 33, 37, 42, 50, 48, 88, 66, 55,6, 12, 16}
 	tree := NewReadBlackTree(ds[0])
-	for i:=1;i<len(ds); i++ {
+	for i := 1; i < len(ds); i++ {
 		tree.Insert(ds[i])
 	}
 
