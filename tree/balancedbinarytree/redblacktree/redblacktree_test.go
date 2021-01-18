@@ -73,7 +73,7 @@ func TestInsert(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-	ds := []data{17, 33, 37, 42, 50, 48, 88, 66, 55,6, 12, 16}
+	ds := []data{17, 33, 37, 42, 50, 48, 88, 66, 55, 6, 12, 16}
 	tree := NewReadBlackTree(ds[0])
 	for i := 1; i < len(ds); i++ {
 		tree.Insert(ds[i])
@@ -83,4 +83,19 @@ func TestDelete(t *testing.T) {
 	fmt.Println()
 	tree.Delete(data(37))
 	printTree(tree)
+}
+
+func TestTraversal(t *testing.T) {
+	ds := []data{17, 33, 37, 42, 50, 48, 88, 66, 55, 6, 12, 16}
+	tree := NewReadBlackTree(ds[0])
+	for i := 1; i < len(ds); i++ {
+		tree.Insert(ds[i])
+	}
+	tree.Traversal(func(i Interface) bool {
+		t.Log(i.Value())
+		if i.Value() == 50 {
+			return false
+		}
+		return true
+	})
 }

@@ -1,5 +1,7 @@
 package redblacktree
 
+import "github.com/hunyxv/datastructure/stack"
+
 // Interface .
 type Interface interface {
 	Value() int
@@ -178,11 +180,11 @@ func (t *RedBlackNode) insertRestructuring() {
 			}
 			// 插入节点的父节点是其祖父节点的右子节点
 			if parent == grandparent.rsubtree {
-				if t == parent.lsubtree { // 插入节点是其父节点的左子节点
+				if t == parent.lsubtree { // 插入节点是其父节点的左子节点，右左
 					parent := parent
 					parent.singRotateRight()
 					parent.insertRestructuring()
-				} else { // 插入节点是其父节点的右子节点
+				} else { // 插入节点是其父节点的右子节点，右右
 					parent.isRed = false
 					grandparent.isRed = true
 					grandparent.singRotateLeft()
@@ -328,4 +330,45 @@ func (t *RedBlackNode) deleteRestructuring() {
 // Data .
 func (t *RedBlackNode) Data() Interface {
 	return t.data
+}
+
+// Depth 树的深度(根节点深度为0)
+func (t *RedBlackNode) Depth() int {
+	var left, right int = 1, 1
+	if t.lsubtree != nil {
+		left = 1 + t.lsubtree.Depth()
+	}
+	if t.rsubtree != nil {
+		right = 1 + t.rsubtree.Depth()
+	}
+	if t.isRoot {
+		return max(left, right) - 1
+	}
+	return max(left, right)
+}
+
+// Traversal 遍历各个值（深度优先--中序遍历 (从小到大)）
+func (t *RedBlackNode) Traversal(f func(Interface) bool) {
+	current := t
+	sk := stack.NewStack(int(t.Depth()))
+	for current != nil || !sk.IsEmpty() {
+		if current != nil {
+			sk.Push(current)
+			current = current.lsubtree
+			continue
+		}
+		el, _ := sk.Pop()
+		node := el.(*RedBlackNode)
+		if !f(node.data) {
+			return
+		}
+		current = node.rsubtree
+	}
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
 }
