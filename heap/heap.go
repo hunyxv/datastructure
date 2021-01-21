@@ -24,7 +24,7 @@ var (
 
 // Interface 用于两个 Interface 比较
 type Interface interface {
-	Value() int
+	Value() float64
 }
 
 // Heap .

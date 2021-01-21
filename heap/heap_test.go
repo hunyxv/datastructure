@@ -11,8 +11,8 @@ type User struct {
 	Age int
 }
 
-func (u *User) Value() int {
-	return u.Age
+func (u *User) Value() float64 {
+	return float64(u.Age)
 }
 
 func TestInterface(t *testing.T) {
@@ -33,14 +33,14 @@ func TestInterface(t *testing.T) {
 	}
 }
 
-type value int
+type value float64
 
-func (val value) Value() int {
-	return int(val)
+func (val value) Value() float64 {
+	return float64(val)
 }
 func TestMaxHeapInsert(t *testing.T) {
 	heap := NewHeap(MaxHeap)
-	result := []int{91, 87, 83, 79, 72, 66, 55, 49, 43, 38, 30, 9}
+	result := []float64{91, 87, 83, 79, 72, 66, 55, 49, 43, 38, 30, 9}
 	for _, val := range []value{79, 66, 43, 83, 30, 87, 38, 55, 91, 72, 49, 9} {
 		heap.Insert(val)
 	}
@@ -52,14 +52,14 @@ func TestMaxHeapInsert(t *testing.T) {
 		}
 
 		if val.Value() != result[i] {
-			t.Fatalf("%d --> %d\n", result[i], val.Value())
+			t.Fatalf("%f --> %f\n", result[i], val.Value())
 		}
 	}
 }
 
 func TestMinHeapInsert(t *testing.T) {
 	heap := NewHeap(MinHeap)
-	result := []int{9, 30, 38, 43, 49, 55, 66, 72, 79, 83, 87, 91}
+	result := []float64{9, 30, 38, 43, 49, 55, 66, 72, 79, 83, 87, 91}
 	for _, val := range []value{79, 66, 43, 83, 30, 87, 38, 55, 91, 72, 49, 9} {
 		heap.Insert(val)
 	}
@@ -71,7 +71,7 @@ func TestMinHeapInsert(t *testing.T) {
 		}
 
 		if val.Value() != result[i] {
-			t.Fatalf("%d --> %d\n", result[i], val.Value())
+			t.Fatalf("%f --> %f\n", result[i], val.Value())
 		}
 	}
 }
@@ -82,7 +82,7 @@ func TestMultiprocessMaxHeapInsert(t *testing.T) {
 		{56, 24, 77, 11, 9, 20, 90, 78, 71, 62},
 		{12, 33, 4, 2, 0, 50, 60, 79, 65, 68},
 	}
-	result := []int{90, 79, 78, 77, 76, 75, 71, 68, 65, 62, 60, 56, 50, 50, 45, 33, 33, 30, 24, 20, 14, 12, 11, 10, 9, 9, 7, 4, 2, 1, 0}
+	result := []float64{90, 79, 78, 77, 76, 75, 71, 68, 65, 62, 60, 56, 50, 50, 45, 33, 33, 30, 24, 20, 14, 12, 11, 10, 9, 9, 7, 4, 2, 1, 0}
 
 	heap := NewHeap(MaxHeap)
 	wg := new(sync.WaitGroup)
@@ -104,7 +104,7 @@ func TestMultiprocessMaxHeapInsert(t *testing.T) {
 		}
 
 		if val.Value() != result[i] {
-			t.Fatalf("%d --> %d\n", result[i], val.Value())
+			t.Fatalf("%f --> %f\n", result[i], val.Value())
 		}
 	}
 }
@@ -115,7 +115,7 @@ func TestMultiprocessMInHeapInsert(t *testing.T) {
 		{56, 24, 77, 11, 9, 20, 90, 78, 71, 62},
 		{12, 33, 4, 2, 0, 50, 60, 79, 65, 68},
 	}
-	result := []int{0, 1, 2, 4, 7, 9, 9, 10, 11, 12, 14, 20, 24, 30, 33, 33, 45, 50, 50, 56, 60, 62, 65, 68, 71, 75, 76, 77, 78, 79, 90}
+	result := []float64{0, 1, 2, 4, 7, 9, 9, 10, 11, 12, 14, 20, 24, 30, 33, 33, 45, 50, 50, 56, 60, 62, 65, 68, 71, 75, 76, 77, 78, 79, 90}
 
 	heap := NewHeap(MinHeap)
 	wg := new(sync.WaitGroup)
@@ -137,7 +137,7 @@ func TestMultiprocessMInHeapInsert(t *testing.T) {
 		}
 
 		if val.Value() != result[i] {
-			t.Fatalf("%d --> %d\n", result[i], val.Value())
+			t.Fatalf("%f --> %f\n", result[i], val.Value())
 		}
 	}
 }
@@ -174,7 +174,7 @@ func TestMinHeapPopByIndex(t *testing.T) {
 		}
 
 		if v1.Value() != v2.Value() {
-			t.Fatalf("v1: %d, v2: %d", v1.Value(), v2.Value())
+			t.Fatalf("v1: %f, v2: %f", v1.Value(), v2.Value())
 		}
 	}
 }
@@ -210,7 +210,7 @@ func TestMaxHeapPopByIndex(t *testing.T) {
 		}
 
 		if v1.Value() != v2.Value() {
-			t.Fatalf("v1: %d, v2: %d", v1.Value(), v2.Value())
+			t.Fatalf("v1: %f, v2: %f", v1.Value(), v2.Value())
 		}
 	}
 }
@@ -218,7 +218,7 @@ func TestMaxHeapPopByIndex(t *testing.T) {
 func TestMaxHeapReplace(t *testing.T) {
 	heap := NewHeap(MaxHeap)
 	testdata := []value{79, 66, 43, 83, 30, 87, 38, 55, 91, 72, 49, 9}
-	result := []int{91, 87, 83, 79, 72, 66, 55, 49, 43, 30, 15, 9}
+	result := []float64{91, 87, 83, 79, 72, 66, 55, 49, 43, 30, 15, 9}
 
 	for _, val := range testdata {
 		heap.Insert(val)
@@ -236,7 +236,7 @@ func TestMaxHeapReplace(t *testing.T) {
 		}
 
 		if val.Value() != result[i] {
-			t.Fatalf("%d --> %d\n", result[i], val.Value())
+			t.Fatalf("%f --> %f\n", result[i], val.Value())
 		}
 	}
 }
@@ -244,7 +244,7 @@ func TestMaxHeapReplace(t *testing.T) {
 func TestMinHeapReplace(t *testing.T) {
 	heap := NewHeap(MinHeap)
 	testdata := []value{79, 66, 43, 83, 30, 87, 38, 55, 91, 72, 49, 9}
-	result := []int{9, 15, 30, 38, 43, 49, 55, 72, 79, 83, 87, 91}
+	result := []float64{9, 15, 30, 38, 43, 49, 55, 72, 79, 83, 87, 91}
 
 	for _, val := range testdata {
 		heap.Insert(val)
@@ -262,7 +262,7 @@ func TestMinHeapReplace(t *testing.T) {
 		}
 
 		if val.Value() != result[i] {
-			t.Fatalf("%d --> %d\n", result[i], val.Value())
+			t.Fatalf("%f --> %f\n", result[i], val.Value())
 		}
 	}
 }
