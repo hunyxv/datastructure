@@ -14,6 +14,7 @@ type Element interface {
 type Node interface {
 	heap.Interface
 	IsLeaf() bool
+	Traversal(func(Node))
 	TraversalLeaf(func(Leaf))
 	GenerateCode()
 	generateCode(int64)
@@ -38,7 +39,7 @@ type HuffmanNode struct {
 
 func newHuffmanNode(lnode, rnode Node) Node {
 	return &HuffmanNode{
-		w:        lnode.Value() + lnode.Value(),
+		w:        lnode.Value() + rnode.Value(),
 		lsubNode: lnode,
 		rsubNode: rnode,
 	}
@@ -64,6 +65,13 @@ func (n *HuffmanNode) GenerateCode() {
 func (n *HuffmanNode) generateCode(code int64) {
 	n.lsubNode.generateCode(code << 1)
 	n.rsubNode.generateCode(code<<1 + 1)
+}
+
+// Traversal 前序遍历各个节点
+func (n *HuffmanNode) Traversal(f func(Node)) {
+	f(n)
+	n.lsubNode.Traversal(f)
+	n.rsubNode.Traversal(f)
 }
 
 // TraversalLeaf 遍历赫夫曼树叶子节点，只在叶子节点执行 f
@@ -115,6 +123,11 @@ func (n *HuffmanLeafNode) GenerateCode() {}
 
 func (n *HuffmanLeafNode) generateCode(code int64) {
 	n.code = code
+}
+
+// Traversal .
+func (n *HuffmanLeafNode) Traversal(f func(Node)) {
+	f(n)
 }
 
 // TraversalLeaf .
