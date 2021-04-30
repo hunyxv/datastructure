@@ -17,14 +17,14 @@ type Node interface {
 	Traversal(func(Node))
 	TraversalLeaf(func(Leaf))
 	GenerateCode()
-	generateCode(int64)
+	generateCode(uint64)
 }
 
 // Leaf 叶子节点
 type Leaf interface {
 	Node
 	Char() interface{}
-	Code() int64 // int --> []byte
+	Code() uint64 
 }
 
 var _ Node = (*HuffmanNode)(nil)
@@ -62,7 +62,7 @@ func (n *HuffmanNode) GenerateCode() {
 	n.rsubNode.generateCode(1<<1 + 1)
 }
 
-func (n *HuffmanNode) generateCode(code int64) {
+func (n *HuffmanNode) generateCode(code uint64) {
 	n.lsubNode.generateCode(code << 1)
 	n.rsubNode.generateCode(code<<1 + 1)
 }
@@ -86,7 +86,7 @@ var _ Leaf = (*HuffmanLeafNode)(nil)
 type HuffmanLeafNode struct {
 	w      float64
 	char   interface{}
-	code   int64
+	code   uint64
 	isLeaf bool
 }
 
@@ -114,14 +114,14 @@ func (n *HuffmanLeafNode) Char() interface{} {
 }
 
 // Code 返回字符的赫夫曼编码
-func (n *HuffmanLeafNode) Code() int64 {
+func (n *HuffmanLeafNode) Code() uint64 {
 	return n.code
 }
 
 // GenerateCode .
 func (n *HuffmanLeafNode) GenerateCode() {}
 
-func (n *HuffmanLeafNode) generateCode(code int64) {
+func (n *HuffmanLeafNode) generateCode(code uint64) {
 	n.code = code
 }
 
