@@ -130,10 +130,10 @@ func statisticalFrequency(file io.Reader, pixelSize int) (freq map[uint32]float6
 func uint64TO01Code(code uint64) byte {
 	var b byte
 	for code != 0 {
+		b <<= 1
 		bit := byte(code % 2)
 		code >>= 1
 		b |= bit
-		b <<= 1
 	}
 	return b
 }
