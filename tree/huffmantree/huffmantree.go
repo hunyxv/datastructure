@@ -143,7 +143,7 @@ func CreateHuffmanTree(elements ...Element) Node {
 
 	var node Node
 	// 最小堆
-	eleHeap := heap.NewHeap(heap.MinHeap)
+	eleHeap := heap.NewBinaryHeap(heap.MinHeap)
 	for _, ele := range elements {
 		node = newHuffmanLeafNode(ele.Weight(), ele.Char())
 		eleHeap.Insert(node)

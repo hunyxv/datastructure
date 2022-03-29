@@ -27,24 +27,23 @@ type Interface interface {
 	Value() float64
 }
 
-// Heap .
-type Heap struct {
+// BinaryHeap .
+type BinaryHeap struct {
 	heap []Interface
 
 	t   T
-	mux *sync.RWMutex
+	mux sync.RWMutex
 }
 
-// NewHeap 创建堆
-func NewHeap(t T) *Heap {
-	return &Heap{
+// NewBinaryHeap 创建堆
+func NewBinaryHeap(t T) *BinaryHeap {
+	return &BinaryHeap{
 		heap: make([]Interface, 0),
 		t:    t,
-		mux:  new(sync.RWMutex),
 	}
 }
 
-func (h *Heap) shiftUp(index int) {
+func (h *BinaryHeap) shiftUp(index int) {
 	switch h.t {
 	case MaxHeap:
 		for h.heap[(index-1)/2].Value() < h.heap[index].Value() {
@@ -59,7 +58,7 @@ func (h *Heap) shiftUp(index int) {
 	}
 }
 
-func (h *Heap) shiftDown(index int) {
+func (h *BinaryHeap) shiftDown(index int) {
 	left := index*2 + 1
 	right := index*2 + 2
 	var target int
@@ -92,7 +91,7 @@ func (h *Heap) shiftDown(index int) {
 }
 
 // Insert 入堆
-func (h *Heap) Insert(val Interface) {
+func (h *BinaryHeap) Insert(val Interface) {
 	h.mux.Lock()
 	defer h.mux.Unlock()
 
@@ -103,7 +102,7 @@ func (h *Heap) Insert(val Interface) {
 }
 
 // Pop 返回堆顶元素并删除
-func (h *Heap) Pop() (val Interface, err error) {
+func (h *BinaryHeap) Pop() (val Interface, err error) {
 	h.mux.Lock()
 	defer h.mux.Unlock()
 
@@ -120,7 +119,7 @@ func (h *Heap) Pop() (val Interface, err error) {
 }
 
 // Peek 返回堆顶元素不删除
-func (h *Heap) Peek() (val Interface, err error) {
+func (h *BinaryHeap) Peek() (val Interface, err error) {
 	h.mux.RLock()
 	defer h.mux.RUnlock()
 	if len(h.heap) == 0 {
@@ -131,7 +130,7 @@ func (h *Heap) Peek() (val Interface, err error) {
 }
 
 // PopByIndex 返回 index 索引下的值 并删除
-func (h *Heap) PopByIndex(index int) (val Interface, err error) {
+func (h *BinaryHeap) PopByIndex(index int) (val Interface, err error) {
 	h.mux.Lock()
 	defer h.mux.Unlock()
 
@@ -147,7 +146,7 @@ func (h *Heap) PopByIndex(index int) (val Interface, err error) {
 }
 
 // Replace 替换 index 位置的值
-func (h *Heap) Replace(index int, val Interface) error {
+func (h *BinaryHeap) Replace(index int, val Interface) error {
 	h.mux.Lock()
 	defer h.mux.Unlock()
 
@@ -162,7 +161,7 @@ func (h *Heap) Replace(index int, val Interface) error {
 }
 
 // Size .
-func (h *Heap) Size() int {
+func (h *BinaryHeap) Size() int {
 	h.mux.RLock()
 	defer h.mux.RUnlock()
 	return len(h.heap)
