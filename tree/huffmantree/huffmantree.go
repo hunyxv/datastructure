@@ -24,7 +24,7 @@ type Node interface {
 type Leaf interface {
 	Node
 	Char() interface{}
-	Code() uint64 
+	Code() uint64
 }
 
 var _ Node = (*HuffmanNode)(nil)
@@ -49,6 +49,8 @@ func newHuffmanNode(lnode, rnode Node) Node {
 func (n *HuffmanNode) Value() float64 {
 	return n.w
 }
+
+func (n *HuffmanNode) Key() any { return nil }
 
 // IsLeaf 是否为叶子节点
 func (n *HuffmanNode) IsLeaf() bool {
@@ -102,6 +104,8 @@ func newHuffmanLeafNode(weight float64, ch interface{}) *HuffmanLeafNode {
 func (n *HuffmanLeafNode) Value() float64 {
 	return n.w
 }
+
+func (n *HuffmanLeafNode) Key() any { return nil }
 
 // IsLeaf 是否为叶子节点
 func (n *HuffmanLeafNode) IsLeaf() bool {

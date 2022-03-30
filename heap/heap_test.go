@@ -1,7 +1,6 @@
 package heap
 
 import (
-	"math/rand"
 	"sync"
 	"testing"
 )
@@ -14,6 +13,10 @@ type User struct {
 
 func (u *User) Value() float64 {
 	return float64(u.Age)
+}
+
+func (u *User) Key() any {
+	return u.ID
 }
 
 func TestInterface(t *testing.T) {
@@ -39,6 +42,11 @@ type value float64
 func (val value) Value() float64 {
 	return float64(val)
 }
+
+func (val value) Key() any {
+	return float64(val)
+}
+
 func TestMaxHeapInsert(t *testing.T) {
 	heap := NewBinaryHeap(MaxHeap)
 	result := []float64{91, 87, 83, 79, 72, 66, 55, 49, 43, 38, 30, 9}
@@ -268,20 +276,82 @@ func TestMinHeapReplace(t *testing.T) {
 	}
 }
 
-func TestFibHeap(t *testing.T) {
-	heap := NewFibHeap(100, MinHeap)
-	
-	for i := 0;i<100;i++{
-		n := rand.Intn(100)
-		heap.Insert(value(n))
+func TestFibHeapPop(t *testing.T) {
+	heap := NewFibHeap(MinHeap)
+	heap2 := NewFibHeap(MinHeap)
+
+	for _, i := range []value{0, 2, 56, 11, 13, 29, 33, 66, 78, 81, 85, 87, 88, 37, 23, 25, 41, 91, 94, 95, 140, 141, 146, 103, 128, 137, 152, 157, 163, 177, 183, 159, 161, 162, 187, 189, 5, 47, 51, 190, 194, 196} {
+		heap.Insert(i)
+	}
+	for _, i := range []value{-1, -15, 101, 102, 100, 155, 122} {
+		heap2.Insert(i)
 	}
 
+	heap.Union(heap2)
+	var i int
+	list := make([]value, 0)
 	for {
+		i++
 		n, err := heap.Pop()
 		if err != nil {
-			t.Log(err)
-			return
+			break
 		}
 		t.Log(n)
+		list = append(list, value(n.Value()))
+	}
+	t.Log(list)
+	t.Log("-> ", i)
+}
+
+func TestFibHeapUpdateValue(t *testing.T) {
+	heap := NewFibHeap(MaxHeap)
+	heap.Insert(&User{ID: 1, Name: "zhangsan", Age: 20})
+	heap.Insert(&User{ID: 2, Name: "lisi", Age: 25})
+	heap.Insert(&User{ID: 3, Name: "wangwu", Age: 22})
+	heap.Insert(&User{ID: 4, Name: "zhaoliu", Age: 26})
+	heap.Insert(&User{ID: 5, Name: "liuyi", Age: 26})
+	heap.Insert(&User{ID: 6, Name: "chener", Age: 19})
+	heap.Insert(&User{ID: 7, Name: "sunqi", Age: 30})
+	heap.Insert(&User{ID: 8, Name: "zhouba", Age: 18})
+	heap.Insert(&User{ID: 9, Name: "wujiu", Age: 29})
+	heap.Insert(&User{ID: 10, Name: "zhengshi", Age: 35})
+
+	u, err := heap.Pop()
+	if err != nil || (u.Value() != 18 && heap.T() == MinHeap) || (u.Value() != 35 && heap.T() == MaxHeap) {
+		t.Fail()
+	}
+
+	heap.UpdateValue(&User{ID: 4, Name: "zhaoliu", Age: 28})
+
+	for val, err := heap.Pop(); err == nil; val, err = heap.Pop() {
+		t.Log(val.(*User))
+	}
+}
+
+func TestFibHeapDelete(t *testing.T) {
+	heap := NewFibHeap(MinHeap)
+	heap.Insert(&User{ID: 1, Name: "zhangsan", Age: 20})
+	heap.Insert(&User{ID: 2, Name: "lisi", Age: 25})
+	heap.Insert(&User{ID: 3, Name: "wangwu", Age: 22})
+	heap.Insert(&User{ID: 4, Name: "zhaoliu", Age: 26})
+	heap.Insert(&User{ID: 5, Name: "liuyi", Age: 26})
+	heap.Insert(&User{ID: 6, Name: "chener", Age: 19})
+	heap.Insert(&User{ID: 7, Name: "sunqi", Age: 30})
+	heap.Insert(&User{ID: 8, Name: "zhouba", Age: 18})
+	heap.Insert(&User{ID: 9, Name: "wujiu", Age: 29})
+	heap.Insert(&User{ID: 10, Name: "zhengshi", Age: 35})
+
+	u, err := heap.Pop()
+	if err != nil || (u.Value() != 18 && heap.T() == MinHeap) || (u.Value() != 35 && heap.T() == MaxHeap) {
+		t.Fail()
+	}
+
+	heap.Delete(4)
+
+	for val, err := heap.Pop(); err == nil; val, err = heap.Pop() {
+		if val.Key() == 4 {
+			t.Fail()
+		}
+		t.Log(val.(*User))
 	}
 }

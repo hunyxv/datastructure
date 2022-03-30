@@ -24,7 +24,8 @@ var (
 
 // Interface 用于两个 Interface 比较
 type Interface interface {
-	Value() float64
+	Key() any       // 唯一标识
+	Value() float64 // 排序指标
 }
 
 // BinaryHeap .
@@ -168,15 +169,9 @@ func (h *BinaryHeap) Size() int {
 }
 
 func le(a, b Interface) bool {
-	if a.Value() < b.Value() {
-		return true
-	}
-	return false
+	return a.Value() <= b.Value()
 }
 
 func ge(a, b Interface) bool {
-	if a.Value() > b.Value() {
-		return true
-	}
-	return false
+	return a.Value() >= b.Value()
 }
