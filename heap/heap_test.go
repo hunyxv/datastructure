@@ -1,8 +1,12 @@
 package heap
 
 import (
+	"log"
+	"math/rand"
 	"sync"
+	"sync/atomic"
 	"testing"
+	"time"
 )
 
 type User struct {
@@ -276,31 +280,53 @@ func TestMinHeapReplace(t *testing.T) {
 	}
 }
 
-func TestFibHeapPop(t *testing.T) {
+type TValue struct {
+	key int64
+	val float64
+}
+
+func (tv *TValue) Key() interface{} {
+	return tv.key
+}
+
+func (tv *TValue) Value() float64 {
+	return tv.val
+}
+
+func TestFibHeapInsertPop(t *testing.T) {
 	heap := NewFibHeap(MinHeap)
-	heap2 := NewFibHeap(MinHeap)
-
-	for _, i := range []value{0, 2, 56, 11, 13, 29, 33, 66, 78, 81, 85, 87, 88, 37, 23, 25, 41, 91, 94, 95, 140, 141, 146, 103, 128, 137, 152, 157, 163, 177, 183, 159, 161, 162, 187, 189, 5, 47, 51, 190, 194, 196} {
-		heap.Insert(i)
+	rand.Seed(time.Now().UnixNano())
+	var id int64
+	var count int64
+	for i := 0; i < 10; i++ {
+		go func() {
+			for i := 0; i < 10000; i++ {
+				err := heap.Insert(&TValue{
+					key: atomic.AddInt64(&id, 1),
+					val: float64(rand.Intn(10000)),
+				})
+				if err != nil {
+					log.Fatal(err)
+				}
+				if i%100 == 1 {
+					heap.Pop()
+					atomic.AddInt64(&count, 1)
+				}
+			}
+		}()
 	}
-	for _, i := range []value{-1, -15, 101, 102, 100, 155, 122} {
-		heap2.Insert(i)
-	}
 
-	heap.Union(heap2)
-	var i int
-	list := make([]value, 0)
+	time.Sleep(100 * time.Millisecond)
 	for {
-		i++
-		n, err := heap.Pop()
+		_, err := heap.Pop()
 		if err != nil {
 			break
 		}
-		t.Log(n)
-		list = append(list, value(n.Value()))
+		count++
+		// t.Log(n.Key(), n.Value())
 	}
-	t.Log(list)
-	t.Log("-> ", i)
+
+	t.Log(count)
 }
 
 func TestFibHeapUpdateValue(t *testing.T) {
@@ -322,6 +348,7 @@ func TestFibHeapUpdateValue(t *testing.T) {
 	}
 
 	heap.UpdateValue(&User{ID: 4, Name: "zhaoliu", Age: 28})
+	heap.UpdateValue(&User{ID: 7, Name: "sunqi", Age: 12})
 
 	for val, err := heap.Pop(); err == nil; val, err = heap.Pop() {
 		t.Log(val.(*User))
@@ -346,8 +373,8 @@ func TestFibHeapDelete(t *testing.T) {
 		t.Fail()
 	}
 
-	heap.Delete(4)
-
+	v := heap.Delete(4)
+	t.Log("delete: ", v.(*User))
 	for val, err := heap.Pop(); err == nil; val, err = heap.Pop() {
 		if val.Key() == 4 {
 			t.Fail()
