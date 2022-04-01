@@ -300,11 +300,10 @@ func (h *FibHeap) moveChildren2Root(p *node) {
 		return
 	}
 
-	for e := children.Front(); e != nil;{
+	for e := children.Front(); e != nil; {
 		child := e.Value.(*node)
 		child.parent = nil
 		child.self = h.root.PushBack(child)
-	
 		next := e.Next()
 		children.Remove(e)
 		e = next
